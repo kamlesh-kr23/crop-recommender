@@ -12,33 +12,41 @@ from django.utils.timezone import now
 from django.conf import settings
 from django.db.models import Count
 from django.db.models.functions import TruncDate
+from django.http import Http404
 
 from .models import UserProfile, Prediction
 from .ml.loader import predict_one, load_bundle
 
 
-# ================= COMMON STAFF DECORATOR =================
+# =====================================================
+# COMMON DECORATORS
+# =====================================================
+
+def is_admin(user):
+    return user.is_authenticated and user.is_staff
+
 
 def staff_required(view_func):
     return login_required(login_url="admin_login")(
-        user_passes_test(lambda u: u.is_staff)(view_func)
+        user_passes_test(is_admin)(view_func)
     )
 
 
-def is_admin(user):
-    return user.is_staff
-
-
-# ================= HOME =================
+# =====================================================
+# HOME
+# =====================================================
 
 def home(request):
     return render(request, "home.html")
 
 
-# ================= SIGNUP =================
+# =====================================================
+# USER SIGNUP
+# =====================================================
 
 @require_http_methods(["GET", "POST"])
 def signup_view(request):
+
     if request.method == "POST":
         name = request.POST.get("full_name", "").strip()
         phone = request.POST.get("phone", "").strip()
@@ -64,11 +72,11 @@ def signup_view(request):
             return redirect("signup")
 
         if not terms:
-            messages.error(request, "You must accept terms.")
+            messages.error(request, "Accept terms first.")
             return redirect("signup")
 
         if User.objects.filter(username=email).exists():
-            messages.error(request, "Account already exists.")
+            messages.error(request, "Email already registered.")
             return redirect("signup")
 
         user = User.objects.create_user(
@@ -77,9 +85,9 @@ def signup_view(request):
             password=password
         )
 
-        name_parts = name.split()
-        user.first_name = name_parts[0]
-        user.last_name = " ".join(name_parts[1:])
+        parts = name.split()
+        user.first_name = parts[0]
+        user.last_name = " ".join(parts[1:])
         user.save()
 
         UserProfile.objects.create(user=user, phone=phone)
@@ -90,10 +98,13 @@ def signup_view(request):
     return render(request, "signup.html")
 
 
-# ================= LOGIN =================
+# =====================================================
+# USER LOGIN
+# =====================================================
 
 @require_http_methods(["GET", "POST"])
 def login_view(request):
+
     if request.method == "POST":
         email = request.POST.get("email", "").strip().lower()
         password = request.POST.get("password", "")
@@ -110,7 +121,9 @@ def login_view(request):
     return render(request, "login.html")
 
 
-# ================= LOGOUT =================
+# =====================================================
+# LOGOUT
+# =====================================================
 
 @login_required
 def logout_view(request):
@@ -118,10 +131,13 @@ def logout_view(request):
     return redirect("login")
 
 
-# ================= PREDICT =================
+# =====================================================
+# PREDICTION
+# =====================================================
 
 @login_required
 def predict_view(request):
+
     bundle = load_bundle()
     feature_order = bundle["feature_cols"]
 
@@ -130,19 +146,20 @@ def predict_view(request):
 
     if request.method == "POST":
         try:
-            input_data = []
+            values = []
 
             for feature in feature_order:
-                value = request.POST.get(feature, "").strip()
-                if not value:
+                val = request.POST.get(feature, "").strip()
+
+                if not val:
                     messages.error(request, f"{feature} is required.")
                     return redirect("predict")
 
-                numeric_value = float(value)
-                input_data.append(numeric_value)
-                last_data[feature] = numeric_value
+                num = float(val)
+                values.append(num)
+                last_data[feature] = num
 
-            result = predict_one(input_data)
+            result = predict_one(values)
 
             Prediction.objects.create(
                 user=request.user,
@@ -152,8 +169,9 @@ def predict_view(request):
 
         except ValueError:
             messages.error(request, "Invalid numeric input.")
+
         except Exception:
-            messages.error(request, "Prediction failed. Please try again.")
+            messages.error(request, "Prediction failed.")
 
     return render(request, "predict.html", {
         "feature_order": feature_order,
@@ -162,10 +180,13 @@ def predict_view(request):
     })
 
 
-# ================= USER HISTORY =================
+# =====================================================
+# HISTORY
+# =====================================================
 
 @login_required
 def user_history_view(request):
+
     predictions = Prediction.objects.filter(
         user=request.user
     ).order_by("-created_at")
@@ -176,21 +197,27 @@ def user_history_view(request):
 
 
 @login_required
-@require_http_methods(["POST"])
+@require_POST
 def user_delete_predictions(request, pk):
+
     prediction = get_object_or_404(
         Prediction,
         pk=pk,
         user=request.user
     )
+
     prediction.delete()
-    return redirect("user_history")
+    messages.success(request, "Record deleted successfully.")
+    return redirect("history")
 
 
-# ================= PROFILE =================
+# =====================================================
+# PROFILE
+# =====================================================
 
 @login_required
 def user_profile_view(request):
+
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == "POST":
@@ -201,7 +228,7 @@ def user_profile_view(request):
         profile.phone = request.POST.get("phone", "").strip()
         profile.save()
 
-        messages.success(request, "Profile updated successfully.")
+        messages.success(request, "Profile updated.")
         return redirect("profile")
 
     total_predictions = Prediction.objects.filter(
@@ -214,31 +241,38 @@ def user_profile_view(request):
     })
 
 
-# ================= CHANGE PASSWORD =================
+# =====================================================
+# CHANGE PASSWORD
+# =====================================================
 
 @login_required
 def user_change_password_view(request):
+
     form = PasswordChangeForm(request.user, request.POST or None)
 
     if request.method == "POST" and form.is_valid():
         user = form.save()
         update_session_auth_hash(request, user)
+
         messages.success(request, "Password changed successfully.")
         return redirect("profile")
 
     return render(request, "change_password.html", {"form": form})
 
 
-# ================= ADMIN LOGIN =================
+# =====================================================
+# ADMIN LOGIN
+# =====================================================
 
 @require_http_methods(["GET", "POST"])
 def admin_login_view(request):
+
     if request.user.is_authenticated and request.user.is_staff:
         return redirect("admin_dashboard")
 
     if request.method == "POST":
-        username = request.POST.get("username", "")
-        password = request.POST.get("password", "")
+        username = request.POST.get("username", "").strip()
+        password = request.POST.get("password", "").strip()
 
         user = authenticate(request, username=username, password=password)
 
@@ -252,10 +286,52 @@ def admin_login_view(request):
     return render(request, "admin_login.html")
 
 
-# ================= ADMIN DASHBOARD =================
+# =====================================================
+# ADMIN REGISTER DISABLED (SECURITY FIX)
+# =====================================================
+
+@require_http_methods(["GET", "POST"])
+def admin_register(request):
+    raise Http404("Page not found")
+
+
+# =====================================================
+# FORGOT PASSWORD
+# =====================================================
+
+@require_http_methods(["GET", "POST"])
+def forgot_password(request):
+
+    if request.method == "POST":
+        username = request.POST.get("username", "").strip()
+        new_password = request.POST.get("password", "").strip()
+
+        if not username or not new_password:
+            messages.error(request, "All fields required.")
+            return redirect("forgot_password")
+
+        try:
+            user = User.objects.get(username=username)
+            user.set_password(new_password)
+            user.save()
+
+            messages.success(request, "Password reset successful.")
+            return redirect("admin_login")
+
+        except User.DoesNotExist:
+            messages.error(request, "Username not found.")
+            return redirect("forgot_password")
+
+    return render(request, "forgot_password.html")
+
+
+# =====================================================
+# ADMIN DASHBOARD
+# =====================================================
 
 @staff_required
 def admin_dashboard_view(request):
+
     today = now().date()
     last_7_days = now() - timedelta(days=7)
 
@@ -277,11 +353,13 @@ def admin_dashboard_view(request):
         ).count(),
         "weekly_data": list(weekly_data),
         "recent_predictions": Prediction.objects.select_related("user")
-            .order_by("-created_at")[:10]
+        .order_by("-created_at")[:10]
     })
 
 
-# ================= ADMIN LOGOUT =================
+# =====================================================
+# ADMIN LOGOUT
+# =====================================================
 
 @staff_required
 def admin_logout_view(request):
@@ -289,74 +367,95 @@ def admin_logout_view(request):
     return redirect("home")
 
 
-# ================= ADMIN VIEW PREDICTIONS =================
-
-@staff_required
-def admin_view_predictions(request):
-    predictions = Prediction.objects.select_related(
-        "user"
-    ).order_by("-created_at")
-
-    return render(request, "admin_view_predictions.html", {
-        "predictions": predictions
-    })
-
-
-@staff_required
-@require_http_methods(["POST"])
-def admin_delete_prediction(request, pk):
-    prediction = get_object_or_404(Prediction, pk=pk)
-    prediction.delete()
-    return redirect("admin_predictions")
-
-
-# ================= ADMIN VIEW USERS =================
+# =====================================================
+# ADMIN USERS
+# =====================================================
 
 @staff_required
 def admin_view_users(request):
+
     users = User.objects.order_by("-date_joined")
+
     return render(request, "admin_view_users.html", {
         "users": users
     })
 
 
 @staff_required
-@require_http_methods(["POST"])
+@require_POST
 def admin_delete_user(request, pk):
+
     user = get_object_or_404(User, pk=pk)
 
-    if user.is_superuser or user.is_staff:
-        messages.error(request, "Admin/Superuser cannot be deleted.")
+    if user.is_staff or user.is_superuser:
+        messages.error(request, "Admin cannot be deleted.")
     else:
         user.delete()
         messages.success(request, "User deleted successfully.")
 
     return redirect("admin_users")
-# ===== Admin - View All Predictions =====
-@login_required
-@user_passes_test(is_admin)
+
+
+# =====================================================
+# ADMIN PREDICTIONS
+# =====================================================
+
+@staff_required
 def admin_predictions(request):
 
-    predictions = (
-        Prediction.objects
-        .select_related("user")
-        .order_by("-created_at")
-    )
+    predictions = Prediction.objects.select_related(
+        "user"
+    ).order_by("-created_at")
 
     return render(request, "admin_predictions.html", {
         "predictions": predictions
     })
 
 
-# ===== Admin - Delete Prediction =====
-@login_required
-@user_passes_test(is_admin)
+@staff_required
 @require_POST
 def admin_delete_prediction(request, pk):
 
-    prediction = get_object_or_404(Prediction, id=pk)
+    prediction = get_object_or_404(Prediction, pk=pk)
     prediction.delete()
 
     messages.success(request, "Prediction deleted successfully.")
-
     return redirect("admin_predictions")
+
+@require_http_methods(["GET", "POST"])
+def admin_register(request):
+
+    if request.method == "GET":
+        return render(request, "admin_register.html")
+
+    username = request.POST.get("username", "").strip()
+    email = request.POST.get("email", "").strip().lower()
+    password = request.POST.get("password", "").strip()
+    secret_key = request.POST.get("secret_key", "").strip()
+
+    ADMIN_SECRET = "MYADMIN2026"
+
+    if not username or not email or not password or not secret_key:
+        messages.error(request, "All fields are required.")
+        return redirect("admin_register")
+
+    if secret_key != ADMIN_SECRET:
+        messages.error(request, "Invalid Secret Key.")
+        return redirect("admin_register")
+
+    if User.objects.filter(username=username).exists():
+        messages.error(request, "Username already exists.")
+        return redirect("admin_register")
+
+    if User.objects.filter(email=email).exists():
+        messages.error(request, "Email already exists.")
+        return redirect("admin_register")
+
+    User.objects.create_superuser(
+        username=username,
+        email=email,
+        password=password
+    )
+
+    messages.success(request, "Admin account created successfully.")
+    return redirect("admin_login")

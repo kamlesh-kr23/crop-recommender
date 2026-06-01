@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Predictions{% endblock %}
+
+{% block content %}
+
+<style>
+    .page-wrap {
+        min-height: 90vh;
+        padding: 30px 15px;
+        background: #f8f9fa;
+    }
+
+    .main-box {
+        width: 100%;
+        max-width: 1400px;
+        margin: auto;
+        background: #fff;
+        border-radius: 16px;
+        padding: 25px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+    }
+
+    .table-responsive {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    table {
+        min-width: 1100px;
+    }
+
+    th {
+        background: #198754 !important;
+        color: #fff !important;
+        white-space: nowrap;
+    }
+
+    td {
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .badge-result {
+        background: #198754;
+        color: #fff;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+    }
+
+    .empty-box {
+        text-align: center;
+        padding: 50px 20px;
+        color: #666;
+    }
+
+    .btn-sm {
+        padding: 5px 12px;
+    }
+</style>
+
+<div class="page-wrap">
+
+    <div class="main-box">
+
+        <div class="top-bar">
+            <div>
+                <h3 class="fw-bold mb-1">
+                    <i class="fa-solid fa-chart-line me-2 text-success"></i>
+                    All Predictions
+                </h3>
+                <small class="text-muted">
+                    Admin panel prediction records
+                </small>
+            </div>
+
+            <div>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-success">
+                    <i class="fa-solid fa-arrow-left me-1"></i>
+                    Dashboard
+                </a>
+            </div>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}}">
+            {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {% if predictions %}
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Crop Result</th>
+                        <th>N</th>
+                        <th>P</th>
+                        <th>K</th>
+                        <th>Temp</th>
+                        <th>Humidity</th>
+                        <th>pH</th>
+                        <th>Rainfall</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for p in predictions %}
+                    <tr>
+
+                        <td>{{ p.id }}</td>
+
+                        <td>
+                            {{ p.user.username }}
+                        </td>
+
+                        <td>
+                            <span class="badge-result">
+                                {{ p.predicted_label }}
+                            </span>
+                        </td>
+
+                        <td>{{ p.N }}</td>
+                        <td>{{ p.P }}</td>
+                        <td>{{ p.K }}</td>
+                        <td>{{ p.temperature }}</td>
+                        <td>{{ p.humidity }}</td>
+                        <td>{{ p.ph }}</td>
+                        <td>{{ p.rainfall }}</td>
+
+                        <td>
+                            {{ p.created_at|date:"d M Y h:i A" }}
+                        </td>
+
+                        <td>
+
+                            <form method="POST" action="{% url 'admin_delete_prediction' p.id %}"
+                                onsubmit="return confirm('Delete this prediction?')">
+
+                                {% csrf_token %}
+
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty-box">
+            <i class="fa-solid fa-database fa-3x mb-3 text-muted"></i>
+            <h5>No Predictions Found</h5>
+        </div>
+
+        {% endif %}
+
+    </div>
+</div>
+<footer class="bg-success text-white mt-4 py-2">
+    <div class="container text-center small">
+        All Rights Reserved © 2026 Smart Crop Recommendation
+    </div>
+</footer>
+
+{% endblock %}

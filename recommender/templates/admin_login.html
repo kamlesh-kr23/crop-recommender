@@ -6,148 +6,188 @@
 {% block content %}
 
 <style>
-.main-wrapper {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 85vh;
+/* Full Responsive Layout */
+
+
+.main-wrapper{
+    width:100%;
+    min-height:88vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
 }
 
-.login-container {
-    width: 90%;
-    max-width: 900px;
-    background: white;
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+.login-container{
+    width:100%;
+    max-width:900px;
+    background:#fff;
+    border-radius:16px;
+    overflow:hidden;
+    box-shadow:0 10px 35px rgba(0,0,0,0.08);
 }
 
-.left-side {
-    background: url("{% static 'images/farm.jpg' %}") no-repeat center;
-    background-size: cover;
-    color: white;
-    padding: 40px;
+/* Left Panel */
+.left-side{
+    background:url("{% static 'images/farm.jpg' %}") no-repeat center;
+    background-size:cover;
+    color:#fff;
+    min-height:580px;
+    padding:40px;
+    position:relative;
 }
 
-.right-side {
-    padding: 40px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+.left-side::before{
+    content:'';
+    position:absolute;
+    inset:0;
+    background:rgba(0,0,0,0.45);
 }
 
-.form-control {
-    height: 44px;
-    padding-right: 45px;
+.left-content{
+    position:relative;
+    z-index:2;
 }
 
-.password-wrapper {
-    position: relative;
+/* Right Panel */
+.right-side{
+    padding:45px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 
-.password-wrapper i {
-    position: absolute;
-    right: 15px;
-    top: 70%;
-    transform: translateY(-50%);
-    cursor: pointer;
-    color: #6c757d;
+.form-control{
+    height:46px;
+    border-radius:8px;
 }
 
-.btn-success {
-    height: 45px;
-    font-weight: 600;
+.password-wrapper{
+    position:relative;
 }
 
-@media (max-width: 768px) {
-    .left-side {
-        display: none;
+.password-wrapper i{
+    position:absolute;
+    right:15px;
+    top:72%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#777;
+}
+
+.btn-success{
+    height:46px;
+    font-weight:600;
+    border-radius:8px;
+}
+
+.extra-links{
+    display:flex;
+    justify-content:space-between;
+    margin-top:14px;
+    flex-wrap:wrap;
+    gap:10px;
+}
+
+.extra-links a{
+    text-decoration:none;
+    font-size:14px;
+}
+
+@media(max-width:768px){
+    .left-side{
+        display:none;
+    }
+
+    .right-side{
+        padding:28px;
+    }
+
+    .login-container{
+        max-width:100%;
     }
 }
 </style>
 
 <div class="main-wrapper">
-    <div class="login-container row g-0">
 
-        <!-- LEFT PANEL -->
-        <div class="col-md-5 left-side d-none d-md-flex align-items-center justify-content-center text-center">
-            <div>
-                <h4 class="fw-bold">Admin Panel</h4>
-                <p class="mt-2 small">Secure dashboard access for authorized staff</p>
+<div class="login-container row g-0">
+
+    <!-- LEFT -->
+    <div class="col-md-5 left-side d-none d-md-flex align-items-center justify-content-center text-center">
+        <div class="left-content">
+            <h3 class="fw-bold"> Admin</h3>
+            <p class="mt-3">Secure dashboard access for authorized administrators.</p>
+        </div>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="col-md-7 right-side">
+
+        <h4 class="mb-4 fw-bold">
+            <i class="fa-solid fa-user-shield me-2"></i>Admin Login
+        </h4>
+
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
             </div>
-        </div>
+            {% endfor %}
+        {% endif %}
 
-        <!-- RIGHT PANEL -->
-        <div class="col-md-7 right-side">
+        <form method="POST" action="{% url 'admin_login' %}">
+            {% csrf_token %}
 
-            <h4 class="mb-4 fw-semibold">
-                <i class="fa-solid fa-user-shield me-2"></i>Admin Login
-            </h4>
+            <div class="mb-3">
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
 
-            <!-- Messages -->
-            {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags|default:'danger' }}">
-                        {{ message }}
-                    </div>
-                {% endfor %}
-            {% endif %}
+            <div class="mb-3 password-wrapper">
+                <label>Password</label>
+                <input type="password" name="password" id="password" class="form-control" required>
+                <i class="fa-solid fa-eye" onclick="togglePassword()" id="toggleIcon"></i>
+            </div>
 
-            <form method="POST" action="{% url 'admin_login' %}" autocomplete="off">
-                {% csrf_token %}
+            <button type="submit" class="btn btn-success w-100">
+                Login
+            </button>
 
-                <div class="mb-3">
-                    <label class="form-label">Username</label>
-                    <input type="text"
-                           name="username"
-                           class="form-control"
-                           placeholder="Enter Username"
-                           required
-                           autocomplete="username">
-                </div>
+            <div class="extra-links">
+                <a href="{% url 'admin_register' %}" class="text-success fw-semibold">
+                    Create Admin Account
+                </a>
 
-                <div class="mb-3 password-wrapper">
-                    <label class="form-label">Password</label>
-                    <input type="password"
-                           name="password"
-                           id="password"
-                           class="form-control"
-                           placeholder="Enter Password"
-                           required
-                           autocomplete="current-password">
-                    <i class="fa-solid fa-eye" id="toggleIcon" onclick="togglePassword()"></i>
-                </div>
+                <a href="{% url 'forgot_password' %}" class="text-danger fw-semibold">
+                    Forgot Password?
+                </a>
+            </div>
 
-                <button type="submit" class="btn btn-success w-100">
-                    Login
-                </button>
-            </form>
-
-        </div>
+        </form>
 
     </div>
+
+</div>
 </div>
 
-<!-- Footer -->
-<footer class="bg-success text-white text-center py-3 mt-4">
-    <div class="container">
-        <small>
-            © 2026 Smart Crop Recommendation | Built with Django & ML
-        </small>
-    </div>
+<footer class="bg-success text-white py-2 mt-4">
+<div class="container text-center small">
+All Rights Reserved © 2026 Smart Crop Recommendation
+</div>
 </footer>
 
 <script>
-function togglePassword() {
-    const password = document.getElementById("password");
-    const icon = document.getElementById("toggleIcon");
+function togglePassword(){
+    let password=document.getElementById("password");
+    let icon=document.getElementById("toggleIcon");
 
-    if (password.type === "password") {
-        password.type = "text";
+    if(password.type==="password"){
+        password.type="text";
         icon.classList.remove("fa-eye");
         icon.classList.add("fa-eye-slash");
-    } else {
-        password.type = "password";
+    }else{
+        password.type="password";
         icon.classList.remove("fa-eye-slash");
         icon.classList.add("fa-eye");
     }

@@ -1,0 +1,109 @@
+<!-- templates/admin_register.html -->
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Admin Register{% endblock %}
+
+{% block content %}
+
+<style>
+    .wrapper {
+        min-height: 88vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 20px;
+    }
+
+    .box {
+        width: 100%;
+        max-width: 520px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 35px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .08);
+    }
+
+    .form-control {
+        height: 46px;
+        border-radius: 8px;
+    }
+
+    .btn-success {
+        height: 46px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+
+    .note {
+        font-size: 14px;
+        color: #666;
+    }
+</style>
+
+<div class="wrapper">
+
+    <div class="box">
+
+        <h3 class="mb-4 text-center fw-bold">
+            <i class="fa-solid fa-user-shield me-2"></i>
+            Secure Admin Register
+        </h3>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}}">
+            {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="mb-3">
+                <label>Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Email</label>
+                <input type="email" name="email" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label>Secret Key</label>
+                <input type="password" name="secret_key" class="form-control" required>
+            </div>
+
+            <p class="note mb-3">
+                Only authorized users can create admin account.
+            </p>
+
+            <button type="submit" class="btn btn-success w-100">
+                Create Admin
+            </button>
+
+            <div class="text-center mt-3">
+                <a href="{% url 'admin_login' %}" class="text-success text-decoration-none">
+                    Back To Login
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+<footer class="bg-success text-white mt-4 py-2">
+    <div class="container text-center small">
+        All Rights Reserved © 2026 Smart Crop Recommendation
+    </div>
+</footer>
+
+{% endblock %}

@@ -3,22 +3,16 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
-# ========================
-# SECURITY
-# ========================
-
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = 'django-insecure-elslba^u=qb@7rmev^!0-c^d^%xtz$z9$q(9l6mpxf+^*v*h+#'
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+ALLOWED_HOSTS = ['*']
 
 
 # ========================
 # Applications
 # ========================
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -26,18 +20,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
-    'recommender',
+    'recommender',   # your app
 ]
 
 
 # ========================
 # Middleware
 # ========================
-
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Static for production
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -48,17 +39,15 @@ MIDDLEWARE = [
 
 
 ROOT_URLCONF = 'crop_site.urls'
-WSGI_APPLICATION = 'crop_site.wsgi.application'
 
 
 # ========================
-# Templates
+# Templates Configuration
 # ========================
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [BASE_DIR / 'templates'],   # ✅ Project level templates folder
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -71,23 +60,23 @@ TEMPLATES = [
 ]
 
 
-# ========================
-# Database (Render PostgreSQL Ready)
-# ========================
+WSGI_APPLICATION = 'crop_site.wsgi.application'
 
-import dj_database_url
 
+# ========================
+# Database
+# ========================
 DATABASES = {
-    'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
 # ========================
 # Password Validation
 # ========================
-
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
     {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
@@ -99,9 +88,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # ========================
 # Internationalization
 # ========================
-
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'Asia/Kolkata'
+
+TIME_ZONE = 'Asia/Kolkata'   # ✅ India timezone
 
 USE_I18N = True
 USE_TZ = True
@@ -110,28 +99,29 @@ USE_TZ = True
 # ========================
 # Static Files
 # ========================
-
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
 
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# ========================
-# Media Files
-# ========================
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
 
 
 # ========================
-# Auth Redirects
+# Authentication Redirects
 # ========================
-
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'profile'
 LOGOUT_REDIRECT_URL = 'login'
 
 
+# ========================
+# Default Primary Key
+# ========================
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# Media files (optional)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

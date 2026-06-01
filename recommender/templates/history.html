@@ -4,19 +4,22 @@
 {% block title %}History{% endblock %}
 
 {% block content %}
+
 <div class="container mt-4">
 
     <h3 class="text-center mb-4">
-        <i class="fa-solid fa-clock-rotate-left"></i> Prediction History
+        <i class="fa-solid fa-clock-rotate-left"></i>
+        Prediction History
     </h3>
 
-    <!-- Debug Count (remove later if needed) -->
     <p class="text-center text-muted">
         Total Predictions: {{ predictions|length }}
     </p>
 
     <div class="table-responsive">
+
         <table class="table table-bordered table-hover shadow-sm">
+
             <thead class="table-success text-center">
                 <tr>
                     <th>Date</th>
@@ -28,17 +31,22 @@
                     <th>Humidity (%)</th>
                     <th>pH</th>
                     <th>Rainfall (mm)</th>
-                    <th>Actions</th>
+                    <th>Action</th>
                 </tr>
             </thead>
 
             <tbody>
+
                 {% for p in predictions %}
+
                 <tr class="text-center align-middle">
+
                     <td>{{ p.created_at|date:"d M Y, H:i" }}</td>
+
                     <td class="fw-bold text-success">
                         {{ p.predicted_label }}
                     </td>
+
                     <td>{{ p.N }}</td>
                     <td>{{ p.P }}</td>
                     <td>{{ p.K }}</td>
@@ -46,42 +54,63 @@
                     <td>{{ p.humidity }}</td>
                     <td>{{ p.ph }}</td>
                     <td>{{ p.rainfall }}</td>
+
                     <td>
-                        <a href="{% url 'user_delete_predictions' p.id %}"
-                             class="btn btn-sm btn-outline-danger"
-                              onclick="return confirm('Delete this entry? This cannot be undone.')">
-                            <i class="fa-solid fa-trash"></i>
-                        </a>
+
+                        <form method="POST"
+                              action="{% url 'user_delete_predictions' p.id %}"
+                              onsubmit="return confirm('Delete this record?')">
+
+                            {% csrf_token %}
+
+                            <button type="submit"
+                                    class="btn btn-danger btn-sm">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+
+                        </form>
+
                     </td>
 
                 </tr>
+
                 {% empty %}
+
                 <tr>
-                    <td colspan="10" class="text-center text-muted py-4">
-                        No predictions found. <br>
-                        <a href="{% url 'predict' %}" class="btn btn-success btn-sm mt-2">
-                            Make Your First Prediction
+                    <td colspan="10"
+                        class="text-center text-muted py-4">
+
+                        No predictions found.
+                        <br>
+
+                        <a href="{% url 'predict' %}"
+                           class="btn btn-success btn-sm mt-2">
+
+                           Make Your First Prediction
+
                         </a>
+
                     </td>
                 </tr>
+
                 {% endfor %}
+
             </tbody>
 
         </table>
+
     </div>
 
-
-
 </div>
-<br>
-<br>
-<br>
-<footer class="footer-premium mt-4 bg-success text-white-100">
-    <div class="container">
-        <div class="row">
-            <div class="footer-bottom clip-text text-center small text-muted text-white-100 ">
-              Copyright  © 2026 Smart Crop Recommendation | Built with Django & ML
-            </div>
+
+<br><br><br>
+
+
+    <footer class="bg-success text-white py-2 p">
+        <div class="container text-center small">
+            All Rights Reserved © 2026 Smart Crop Recommendation
         </div>
-</footer>
+    </footer>
+
+
 {% endblock %}

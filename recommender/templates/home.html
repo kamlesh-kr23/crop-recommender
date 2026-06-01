@@ -5,173 +5,186 @@
 {% block content %}
 
 <style>
+    /* ================= HERO ================= */
+    .hero-wrapper {
+        background: linear-gradient(135deg, #1b5e20, #2e7d32, #66bb6a);
+        padding: 70px 0;
+        overflow: hidden;
+        animation: heroFade 1.2s ease;
+        
+    }
 
-/* ================= HERO ================= */
-.hero-wrapper {
-    background: linear-gradient(135deg, #1b5e20, #2e7d32, #66bb6a);
-    padding: 70px 0;
-    overflow: hidden;
-    animation: heroFade 1.2s ease;
-}
-
-.hero-card {
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(14px);
-    border-radius: 20px;
-    padding: 50px 80px;
-    box-shadow: 0 25px 50px rgba(0,0,0,0.25);
-    max-width: 1650px;
-    margin: auto;
-}
-
-/* Animated Title */
-.hero-title {
-    font-size: clamp(28px, 4vw, 44px);
-    font-weight: 900;
-    background: linear-gradient(to right, #ffffff, #c8facc);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: slideText 1.2s ease forwards;
-    opacity: 0;
-}
-
-.hero-subtitle {
-    color: rgba(255,255,255,0.9);
-    font-size: 16px;
-    margin-top: 12px;
-}
-
-/* Buttons same as before */
-.btn-premium {
-    padding: 7px 18px;
-    font-size: 14px;
-    border-radius: 30px;
-    font-weight: 600;
-    transition: 0.3s ease;
-}
-
-.btn-light:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 18px rgba(255,255,255,0.25);
-}
-
-.btn-outline-light:hover {
-    background: white;
-    color: #2e7d32;
-}
-
-/* Responsive Image */
-.hero-img {
-    width: 100%;
-    max-width: 100%;
-    height: auto;
-    border-radius: 15px;
-    box-shadow: 0 20px 40px rgba(0,0,0,0.35);
-    transition: 0.4s ease;
-}
-
-.hero-img:hover {
-    transform: scale(1.03);
-}
-
-/* Stats */
-.stat-box {
-    background: rgba(255,255,255,0.12);
-    padding: 15px;
-    border-radius: 14px;
-    text-align: center;
-    color: white;
-}
-
-.stat-box h3 {
-    font-size: 20px;
-    margin-bottom: 4px;
-}
-
-/* ================= TRUST STRIP ================= */
-.trust-strip {
-    background: #f4fdf6;
-    padding: 20px 0;
-    text-align: center;
-    font-weight: 600;
-    color: #2e7d32;
-}
-
-/* ================= FOOTER ================= */
-.footer-premium {
-    background: linear-gradient(to right, #0d3b12, #124d1a);
-    color: white;
-    padding: 60px 0 25px;
-}
-
-.footer-premium h5 {
-    font-size: 16px;
-    margin-bottom: 15px;
-    font-weight: 700;
-    position: relative;
-}
-
-.footer-premium h5::after {
-    content: "";
-    display: block;
-    width: 40px;
-    height: 3px;
-    background: #66bb6a;
-    margin-top: 6px;
-}
-
-.footer-link {
-    display: block;
-    font-size: 14px;
-    color: rgba(255,255,255,0.75);
-    margin-bottom: 8px;
-    text-decoration: none;
-    transition: 0.3s;
-}
-
-.footer-link:hover {
-    color: #66bb6a;
-    padding-left: 6px;
-}
-
-.footer-bottom {
-    border-top: 1px solid rgba(255,255,255,0.2);
-    margin-top: 35px;
-    padding-top: 15px;
-    text-align: center;
-    font-size: 13px;
-    color: rgba(255,255,255,0.6);
-}
-
-/* ================= ANIMATIONS ================= */
-@keyframes heroFade {
-    from { opacity: 0; transform: translateY(40px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes slideText {
-    from { opacity: 0; transform: translateX(-40px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-/* ================= MOBILE FIX ================= */
-@media (max-width: 768px) {
     .hero-card {
-        padding: 30px 20px;
+        background: rgba(255, 255, 255, 0.08);
+        backdrop-filter: blur(14px);
+        border-radius: 20px;
+        padding: 50px 80px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        max-width: 1650px;
+        margin: auto;
     }
 
+    /* Animated Title */
+    .hero-title {
+        font-size: clamp(28px, 4vw, 44px);
+        font-weight: 900;
+        background: linear-gradient(to right, #ffffff, #c8facc);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: slideText 1.2s ease forwards;
+        opacity: 0;
+    }
+
+    .hero-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 16px;
+        margin-top: 12px;
+    }
+
+    /* Buttons same as before */
+    .btn-premium {
+        padding: 7px 18px;
+        font-size: 14px;
+        border-radius: 30px;
+        font-weight: 600;
+        transition: 0.3s ease;
+    }
+
+    .btn-light:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-outline-light:hover {
+        background: white;
+        color: #2e7d32;
+    }
+
+    /* Responsive Image */
     .hero-img {
-        margin-top: 20px;
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        border-radius: 15px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35);
+        transition: 0.4s ease;
     }
-}
 
+    .hero-img:hover {
+        transform: scale(1.03);
+    }
+
+    /* Stats */
+    .stat-box {
+        background: rgba(255, 255, 255, 0.12);
+        padding: 15px;
+        border-radius: 14px;
+        text-align: center;
+        color: white;
+    }
+
+    .stat-box h3 {
+        font-size: 20px;
+        margin-bottom: 4px;
+    }
+
+    /* ================= TRUST STRIP ================= */
+    .trust-strip {
+        background: #f4fdf6;
+        padding: 20px 0;
+        text-align: center;
+        font-weight: 600;
+        color: #2e7d32;
+    }
+
+    /* ================= FOOTER ================= */
+    .footer-premium {
+        background: linear-gradient(to right, #0d3b12, #124d1a);
+        color: white;
+        padding: 60px 0 25px;
+    }
+
+    .footer-premium h5 {
+        font-size: 16px;
+        margin-bottom: 15px;
+        font-weight: 700;
+        position: relative;
+    }
+
+    .footer-premium h5::after {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 3px;
+        background: #66bb6a;
+        margin-top: 6px;
+    }
+
+    .footer-link {
+        display: block;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.75);
+        margin-bottom: 8px;
+        text-decoration: none;
+        transition: 0.3s;
+    }
+
+    .footer-link:hover {
+        color: #66bb6a;
+        padding-left: 6px;
+    }
+
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.2);
+        margin-top: 35px;
+        padding-top: 15px;
+        text-align: center;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* ================= ANIMATIONS ================= */
+    @keyframes heroFade {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideText {
+        from {
+            opacity: 0;
+            transform: translateX(-40px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    /* ================= MOBILE FIX ================= */
+    @media (max-width: 768px) {
+        .hero-card {
+            padding: 30px 20px;
+        }
+
+        .hero-img {
+            margin-top: 20px;
+        }
+    }
 </style>
 
 
 <!-- ================= HERO ================= -->
-<section class="hero-wrapper">
+<section class="hero-wrapper  ">
     <div class="container-fluid px-4">
-        <div class="hero-card">
+        <div class="hero-card ">
             <div class="row align-items-center">
 
                 <!-- LEFT -->
@@ -187,19 +200,19 @@
 
                     <div class="mt-3 d-flex gap-2 flex-wrap">
                         {% if user.is_authenticated %}
-                            <a href="{% url 'predict' %}" class="btn btn-light btn-premium">
-                                Predict
-                            </a>
-                            <a href="{% url 'history' %}" class="btn btn-outline-light btn-premium">
-                                History
-                            </a>
+                        <a href="{% url 'predict' %}" class="btn btn-light btn-premium">
+                            Predict
+                        </a>
+                        <a href="{% url 'history' %}" class="btn btn-outline-light btn-premium">
+                            History
+                        </a>
                         {% else %}
-                            <a href="{% url 'login' %}" class="btn btn-light btn-premium">
-                                Login
-                            </a>
-                            <a href="{% url 'signup' %}" class="btn btn-outline-light btn-premium">
-                                Sign Up
-                            </a>
+                        <a href="{% url 'login' %}" class="btn btn-light btn-premium">
+                            Login
+                        </a>
+                        <a href="{% url 'signup' %}" class="btn btn-outline-light btn-premium">
+                            Sign Up
+                        </a>
                         {% endif %}
                     </div>
 
@@ -207,13 +220,13 @@
                     <div class="row mt-4">
                         <div class="col-6 col-md-4">
                             <div class="stat-box">
-                                <h3>5+</h3>
+                                <h3>50+</h3>
                                 <small>Users</small>
                             </div>
                         </div>
                         <div class="col-6 col-md-4">
                             <div class="stat-box">
-                                <h3>10+</h3>
+                                <h3>100+</h3>
                                 <small>Predictions</small>
                             </div>
                         </div>
@@ -254,8 +267,8 @@
 
             <div class="col-md-2">
                 <h5>Product</h5>
-                <a href="#" class="footer-link">Predict</a>
-                <a href="#" class="footer-link">History</a>
+                <a href="{% url 'predict' %}" class="footer-link">Predict</a>
+                <a href="{% url 'history' %}" class="footer-link">History</a>
             </div>
 
             <div class="col-md-2">

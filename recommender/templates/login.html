@@ -4,59 +4,88 @@
 {% block title %}Login{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center my-5">
-    <div class="col-lg-8">
-        <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
+
+<div class="container my-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">  <!-- 🔽 reduced width -->
+            <div class="card shadow border-0 rounded-3 overflow-hidden">
+
+```
             <div class="row g-0">
 
-                <!-- LEFT IMAGE -->
-                <div class="col-md-6 d-none d-md-block"
-                    style="background: url('{% static "image/img.jpg" %}') center center / cover no-repeat;">
-                    <!-- <div class="position-absolute start-0 top-0 end-0 h-100"
-                         style="background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.1));"></div>
-                    <div class="position-absolute bottom-0 text-white p-3">
-                        <h5 class="fw-bold mb-1">Login Here</h5>
-                        <p class="small mb-0 text-white-50">
-                            Predict crops, save history, export CSV — all in one dashboard
+                <!-- LEFT SIDE IMAGE -->
+                <div class="col-md-5 d-none d-md-block position-relative"
+                     style="background: url('{% static "image/img.jpg" %}') center/cover no-repeat; min-height: 320px;">
+                    
+                    <div class="position-absolute top-0 start-0 w-100 h-100"
+                         style="background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.1));">
+                    </div>
+
+                    <div class="position-absolute bottom-0 p-3 text-white">
+                        <h6 class="fw-bold mb-1">Welcome Back 👋</h6>
+                        <p class="small text-white-50 mb-0">
+                            Access dashboard & predictions
                         </p>
-                    </div> -->
+                    </div>
                 </div>
 
-                <!-- RIGHT FORM -->
-                <div class="col-md-6 bg-white p-4">
-                    <h4 class="text-center mb-4 ">Login</h4>
+                <!-- RIGHT SIDE FORM -->
+                <div class="col-md-7 bg-white p-3"> <!-- 🔽 reduced padding -->
+
+                    <h5 class="text-center mb-3 fw-semibold text-success">Login</h5>
 
                     {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-danger">{{ message }}</div>
-                    {% endfor %}
+                        {% for message in messages %}
+                            <div class="alert alert-danger py-1 small">{{ message }}</div>
+                        {% endfor %}
                     {% endif %}
 
-                    <form id="loginForm" method="POST" novalidate>
+                    <form method="POST">
                         {% csrf_token %}
 
-                        <div class="mb-3">
-                            <label class="form-label">Email</label>
-                            <input type="email" name="email" class="form-control" placeholder="Enter email" required>
+                        <!-- Email -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Email</label>
+                            <input type="email" name="email"
+                                   class="form-control form-control-sm"
+                                   placeholder="Enter your email" required>
                         </div>
 
-                        <div class="mb-3">
-                            <label class="form-label">Password</label>
-                            <div class="input-group">
-                                <input type="password" name="password" id="loginPwd" class="form-control"
-                                    placeholder="Enter password" required>
+                        <!-- Password -->
+                        <div class="mb-2">
+                            <label class="form-label small fw-semibold">Password</label>
+                            <div class="input-group input-group-sm">
+                                <input type="password" name="password" id="loginPwd"
+                                       class="form-control"
+                                       placeholder="Enter password" required>
                                 <button class="btn btn-outline-secondary" type="button" id="toggleLoginPwd">
                                     <i class="fa-regular fa-eye"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <button type="submit" class="btn btn-success w-100">Login</button>
-
-                        <div class="text-center mt-3">
-                            <small class="text-muted">Don't have an account?</small>
-                            <a href="{% url 'signup' %}" class="ms-1">Create Account</a>
+                        <!-- Forgot Password -->
+                        <div class="mb-2 text-end">
+                            <a href="#"
+                               class="small text-success text-decoration-none">
+                                Forgot Password?
+                            </a>
                         </div>
+
+                        <!-- Login Button -->
+                        <button type="submit"
+                                class="btn btn-success w-100 btn-sm fw-semibold">
+                            Login
+                        </button>
+
+                        <!-- Signup -->
+                        <div class="text-center mt-2">
+                            <small class="text-muted">Don't have an account?</small>
+                            <a href="{% url 'signup' %}" class="small text-success ms-1">
+                                Create
+                            </a>
+                        </div>
+
                     </form>
                 </div>
 
@@ -64,20 +93,24 @@
         </div>
     </div>
 </div>
+```
+
+</div>
 
 <script>
     const loginPwd = document.getElementById('loginPwd');
     const toggleLoginPwd = document.getElementById('toggleLoginPwd');
 
-    // Password toggle
-    toggleLoginPwd.addEventListener('click', () => { loginPwd.type = loginPwd.type === 'password' ? 'text' : 'password'; toggleLoginPwd.firstElementChild.classList.toggle('fa-eye-slash'); });
+    toggleLoginPwd.addEventListener('click', () => {
+        loginPwd.type = loginPwd.type === 'password' ? 'text' : 'password';
+        toggleLoginPwd.firstElementChild.classList.toggle('fa-eye-slash');
+    });
 </script>
-<footer class="footer-premium bg-success text-white-100 mt-4 ">
-    <div class="container">
-        <div class="row">
-            <div class="footer-bottom clip-text text-center small text-muted">
-              Copyright  © 2026 Smart Crop Recommendation | Built with Django & ML
-            </div>
-        </div>
+
+<footer class="bg-success text-white mt-4 py-2">
+    <div class="container text-center small">
+      All Rights Reserved © 2026 Smart Crop Recommendation
+    </div>
 </footer>
+
 {% endblock %}
