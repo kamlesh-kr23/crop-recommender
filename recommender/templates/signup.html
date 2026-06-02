@@ -112,7 +112,7 @@ togglePwd2.addEventListener('click', ()=>{ pwd2.type = pwd2.type==='password'?'t
 // Live password match
 pwd2.addEventListener('input', ()=>{ passwordMatch.style.display = pwd1.value !== pwd2.value ? 'block' : 'none'; });
 </script>
-<footer style="background-color: #198754; color: white; text-align: center; padding: 15px 0; width: 100%;">
+<footer style="background-color: #198754; color: white; text-align: center; padding: 15px 0; width: 100%; box-sizing: border-box; margin: 0;">
     All Rights Reserved © 2026 Smart Crop Recommendation
 </footer>
 {% endblock %}
